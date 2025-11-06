@@ -23,8 +23,25 @@
         </div>
 
         <main>
+            <!-- Delivery Login Form -->
+            <div id="delivery-login-form" class="login-form hidden">
+                <h3>Kirjaudu sisään</h3>
+                <form id="delivery-login">
+                    <div class="form-group">
+                        <label for="delivery-username">Käyttäjätunnus:</label>
+                        <input type="text" id="delivery-username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="delivery-password">Salasana:</label>
+                        <input type="password" id="delivery-password" required>
+                    </div>
+                    <button type="submit">Kirjaudu</button>
+                    <div id="delivery-login-error" class="login-error hidden"></div>
+                </form>
+            </div>
+
             <!-- Delivery Tab Content -->
-            <div id="delivery-tab" class="tab-content active">
+            <div id="delivery-tab" class="tab-content active hidden">
                 <div class="circuit-selector">
                     <label for="circuit-select">Valitse piiri:</label>
                     <select id="circuit-select">
@@ -62,8 +79,28 @@
 
             <!-- Tracker Tab Content -->
             <div id="tracker-tab" class="tab-content">
-                <div id="circuit-tracker" class="circuit-tracker">
-                    <h3>Piirien seuranta</h3>
+                <!-- Tracker Login Form -->
+                <div id="tracker-login-form" class="login-form">
+                    <h3>Kirjaudu sisään</h3>
+                    <form id="tracker-login">
+                        <div class="form-group">
+                            <label for="tracker-username">Käyttäjätunnus:</label>
+                            <input type="text" id="tracker-username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="tracker-password">Salasana:</label>
+                            <input type="password" id="tracker-password" required>
+                        </div>
+                        <button type="submit">Kirjaudu</button>
+                        <div id="tracker-login-error" class="login-error hidden"></div>
+                    </form>
+                </div>
+
+                <div id="circuit-tracker" class="circuit-tracker hidden">
+                    <div class="tracker-header">
+                        <h3>Piirien seuranta</h3>
+                        <button id="tracker-logout-btn" class="logout-btn">Kirjaudu ulos</button>
+                    </div>
                     <div id="tracker-list" class="tracker-list">
                     </div>
                 </div>
