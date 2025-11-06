@@ -1,6 +1,62 @@
 // Circuit data structure - dynamically populated
 const circuits = {};
 
+// Circuit names mapping - maps circuit codes to display names
+const circuitNames = {
+    'KP2': 'KP2 Puntala-Kurkvuori',
+    'KP3': 'KP3 Puntala-Immola',
+    'KP4': 'KP4 Rautionkylä',
+    'KP7': 'KP7 Kaukopää',
+    'KP9': 'KP9 Matara',
+    'KP10': 'KP10 Vuoksenniska',
+    'KP11': 'KP11 Vuoksenniska',
+    'KP12': 'KP12 Vuoksenniska',
+    'KP13': 'KP13 Virasoja',
+    'KP15': 'KP15 Lakasenpelto',
+    'KP16': 'KP16 Kymälahti',
+    'KP16B': 'KP16 B Jäppilänniemi',
+    'KP17': 'KP17 Karhumäki / Sienimäki',
+    'KP18': 'KP18 Sienimäki',
+    'KP19': 'KP19 Sienimäki',
+    'KP21B': 'KP21 B Vintteri-Sotkulampi',
+    'KP22': 'KP22 Tuulikallio-Mansikkala',
+    'KP24': 'KP24 Karhumäki-Korvenkanta',
+    'KP25': 'KP25 Niskalampi-Tainionsuo',
+    'KP26': 'KP26 Mustalampi',
+    'KP27': 'KP27 Hosseinlahti',
+    'KP28': 'KP28 Karhukallio',
+    'KP31': 'KP31 Ritikankoski',
+    'KP32A': 'KP32 A Mansikkala',
+    'KP32B': 'KP32 B Mansikkala',
+    'KP33': 'KP33 Paajala-Pässinniemi',
+    'KP34': 'KP34 Imatrankoski',
+    'KP36': 'KP36 Imatrankoski',
+    'KP37': 'KP37 Onnela',
+    'KP38': 'KP38 Liisanpuisto',
+    'KP39': 'KP39 Saareksiinmäki',
+    'KP40': 'KP40 Saareksiinmäki',
+    'KP41': 'KP41 Imatrankoski',
+    'KP42': 'KP42 Meltola',
+    'KP43B': 'KP43 B Meltola-Räikkölä',
+    'KP44': 'KP44 Korvenkylä-Pellisenranta',
+    'KP46': 'KP46 Korvenkylä-Rauha',
+    'KP47': 'KP47 Tiuruniemi',
+    'KP48': 'KP48 Mäentaus',
+    'KP49': 'KP49 Rajapatsas',
+    'KP51': 'KP51 Savikanta',
+    'KP53': 'KP53 Jakola-Kupari',
+    'KP54': 'KP54 Itä-Siitola - Pistetalot',
+    'KP55': 'KP55 Linnasuo',
+    'KP55A': 'KP55 Linnasuo',
+    'KP55B': 'KP55 B Viraskorpi',
+    'KPR1': 'KP R1 Rasila',
+    'KPR2': 'KP R2 Immolan saha',
+    'KPR3': 'KP R3 Vennonmäki-Kirkonkylä',
+    'KPR4': 'KP R4 Salosaari',
+    'KPR5': 'KP R5 Rasila',
+    'KPR6': 'KP R6 Virmutjoki'
+};
+
 // List of all available circuits
 const availableCircuits = [
     'KP2', 'kp3', 'kp4', 'kp7', 'kp9', 'kp10', 'kp11', 'kp12', 
@@ -108,7 +164,8 @@ function populateCircuitDropdown() {
     for (const circuitName of sortedCircuits) {
         const option = document.createElement('option');
         option.value = circuitName;
-        option.textContent = circuitName;
+        // Use full name if available, otherwise use circuit code
+        option.textContent = circuitNames[circuitName] || circuitName;
         select.appendChild(option);
     }
     
