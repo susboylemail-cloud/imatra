@@ -14,11 +14,13 @@ async function loadCircuitData() {
             if (response.ok) {
                 const text = await response.text();
                 circuits[circuitName] = parseCircuitData(text);
+            } else {
+                console.warn(`Failed to load ${circuitName}.txt: ${response.status} ${response.statusText}`);
             }
         }
         populateCircuitDropdown();
     } catch (error) {
-        console.error('Error loading circuit data:', error);
+        console.error('Error loading circuit data files:', error.message);
         // Create sample data if files don't exist
         createSampleData();
         populateCircuitDropdown();
@@ -27,13 +29,14 @@ async function loadCircuitData() {
 
 // Parse circuit data from text format
 function parseCircuitData(text) {
+    const EXPECTED_FIELDS = 4; // product, street, number, name
     const lines = text.trim().split('\n');
     const subscribers = [];
     
     for (const line of lines) {
         if (line.trim()) {
             const parts = line.split('|').map(p => p.trim());
-            if (parts.length >= 4) {
+            if (parts.length >= EXPECTED_FIELDS) {
                 subscribers.push({
                     product: parts[0],
                     street: parts[1],
@@ -107,11 +110,11 @@ function displayCoverSheet(circuitName, subscribers) {
     const circuitNameElement = document.getElementById('circuit-name');
     const productSummary = document.getElementById('product-summary');
     
-    // Count products
-    const productCounts = {};
-    subscribers.forEach(subscriber => {
-        productCounts[subscriber.product] = (productCounts[subscriber.product] || 0) + 1;
-    });
+    // Count products using reduce for better performance
+    const productCounts = subscribers.reduce((counts, subscriber) => {
+        counts[subscriber.product] = (counts[subscriber.product] || 0) + 1;
+        return counts;
+    }, {});
     
     // Update circuit name
     circuitNameElement.textContent = circuitName;
