@@ -150,6 +150,13 @@ function populateCircuitDropdown() {
     
     // Sort circuits for better user experience
     const sortedCircuits = Object.keys(circuits).sort((a, b) => {
+        // KPR circuits go to the bottom
+        const isKPRA = a.startsWith('KPR');
+        const isKPRB = b.startsWith('KPR');
+        
+        if (isKPRA && !isKPRB) return 1;
+        if (!isKPRA && isKPRB) return -1;
+        
         // Extract numbers from circuit names for proper sorting
         const numA = parseInt(a.match(/\d+/)?.[0] || '0');
         const numB = parseInt(b.match(/\d+/)?.[0] || '0');
@@ -214,6 +221,14 @@ function displayCoverSheet(circuitName, subscribers) {
     // Update circuit name
     circuitNameElement.textContent = circuitName;
     
+    // Display current date and weekday
+    const dateDisplay = document.getElementById('date-display');
+    const now = new Date();
+    const weekdays = ['Sunnuntai', 'Maanantai', 'Tiistai', 'Keskiviikko', 'Torstai', 'Perjantai', 'Lauantai'];
+    const weekday = weekdays[now.getDay()];
+    const dateStr = now.toLocaleDateString('fi-FI');
+    dateDisplay.textContent = `${weekday} ${dateStr}`;
+    
     // Clear previous summary
     productSummary.innerHTML = '';
     
@@ -253,14 +268,39 @@ function displaySubscribers(subscribers) {
     subscribersContainer.innerHTML = '';
     
     // Display each subscriber
-    subscribers.forEach(subscriber => {
+    subscribers.forEach((subscriber, index) => {
         const card = document.createElement('div');
         card.className = 'subscriber-card';
         
-        // Address on top (bold)
+        // Address on top (bold) - make it clickable for navigation
         const address = document.createElement('div');
         address.className = 'subscriber-address';
-        address.textContent = `${subscriber.street} ${subscriber.number}`;
+        
+        // Create navigation link if there's a next address
+        if (index < subscribers.length - 1) {
+            const nextSubscriber = subscribers[index + 1];
+            const currentAddress = `${subscriber.street} ${subscriber.number}, Imatra, Finland`;
+            const nextAddress = `${nextSubscriber.street} ${nextSubscriber.number}, Imatra, Finland`;
+            
+            const navLink = document.createElement('a');
+            navLink.href = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(currentAddress)}&destination=${encodeURIComponent(nextAddress)}&travelmode=driving`;
+            navLink.target = '_blank';
+            navLink.className = 'address-nav-link';
+            navLink.textContent = `${subscriber.street} ${subscriber.number}`;
+            navLink.title = `Navigoi seuraavaan: ${nextSubscriber.street} ${nextSubscriber.number}`;
+            
+            address.appendChild(navLink);
+            
+            // Add navigation icon
+            const navIcon = document.createElement('span');
+            navIcon.className = 'nav-icon';
+            navIcon.textContent = ' 🧭';
+            navIcon.title = `Seuraava: ${nextSubscriber.street} ${nextSubscriber.number}`;
+            address.appendChild(navIcon);
+        } else {
+            // Last address - no navigation link
+            address.textContent = `${subscriber.street} ${subscriber.number}`;
+        }
         
         // Container for name and products
         const nameProductContainer = document.createElement('div');

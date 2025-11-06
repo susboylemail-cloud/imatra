@@ -92,6 +92,17 @@ main {
     font-size: 1.2rem;
 }
 
+.date-display {
+    color: #2c3e50;
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 0.75rem;
+    padding: 0.5rem;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 4px;
+    text-align: center;
+}
+
 .route-controls {
     margin-bottom: 0.75rem;
 }
@@ -213,6 +224,25 @@ main {
     font-weight: bold;
     margin-bottom: 0.25rem;
     font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.address-nav-link {
+    color: #2c3e50;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.address-nav-link:hover {
+    color: #3498db;
+    text-decoration: underline;
+}
+
+.nav-icon {
+    font-size: 0.9rem;
+    cursor: pointer;
 }
 
 .subscriber-name-product {
@@ -325,6 +355,11 @@ body.dark-mode .cover-sheet h2 {
     color: #e0e0e0;
 }
 
+body.dark-mode .date-display {
+    color: #e0e0e0;
+    background-color: rgba(61, 61, 61, 0.7);
+}
+
 body.dark-mode .product-summary {
     background-color: #3d3d3d;
 }
@@ -348,6 +383,14 @@ body.dark-mode .subscriber-card {
 
 body.dark-mode .subscriber-address {
     color: #e0e0e0;
+}
+
+body.dark-mode .address-nav-link {
+    color: #e0e0e0;
+}
+
+body.dark-mode .address-nav-link:hover {
+    color: #3498db;
 }
 
 body.dark-mode .subscriber-name {
