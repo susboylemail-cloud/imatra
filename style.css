@@ -308,10 +308,43 @@ main {
     margin-top: 2rem;
 }
 
+.subscriber-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    gap: 1rem;
+}
+
 .subscriber-list h3 {
     color: #2c3e50;
-    margin-bottom: 1rem;
+    margin-bottom: 0;
     font-size: 1.2rem;
+}
+
+.stf-filter-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    user-select: none;
+}
+
+.stf-filter-toggle input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #3498db;
+}
+
+.stf-filter-toggle span {
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+.subscriber-card.hidden-stf {
+    display: none;
 }
 
 .subscriber-card {
@@ -552,6 +585,10 @@ body.dark-mode .product-name {
 }
 
 body.dark-mode .subscriber-list h3 {
+    color: #e0e0e0;
+}
+
+body.dark-mode .stf-filter-toggle span {
     color: #e0e0e0;
 }
 

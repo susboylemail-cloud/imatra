@@ -442,6 +442,12 @@ function displaySubscribers(subscribers) {
     
     subscriberList.classList.remove('hidden');
     
+    // Apply STF filter if enabled
+    const hideSTFToggle = document.getElementById('hide-stf-toggle');
+    if (hideSTFToggle && hideSTFToggle.checked) {
+        filterSTFProducts();
+    }
+    
     // Show end route button if route has been started
     if (routeStartTime && !routeEndTime) {
         document.getElementById('end-route-btn').classList.remove('hidden');
@@ -734,6 +740,62 @@ function scheduleMidnightReset() {
     }, timeUntilMidnight);
 }
 
+// Initialize STF filter toggle
+function initSTFFilter() {
+    const hideSTFToggle = document.getElementById('hide-stf-toggle');
+    
+    // Load saved state
+    const hideSTF = localStorage.getItem('hideSTF') === 'true';
+    hideSTFToggle.checked = hideSTF;
+    
+    // Apply initial filter state
+    if (hideSTF) {
+        filterSTFProducts();
+    }
+    
+    // Add event listener
+    hideSTFToggle.addEventListener('change', (e) => {
+        localStorage.setItem('hideSTF', e.target.checked);
+        if (e.target.checked) {
+            filterSTFProducts();
+        } else {
+            showAllProducts();
+        }
+    });
+}
+
+// Filter out STF products from subscriber cards
+function filterSTFProducts() {
+    const subscriberCards = document.querySelectorAll('.subscriber-card');
+    subscriberCards.forEach(card => {
+        const productBadges = card.querySelectorAll('.product-badge');
+        let hasNonSTFProduct = false;
+        
+        productBadges.forEach(badge => {
+            const productText = badge.textContent.trim();
+            // Normalize product code - remove numbers (e.g., STF2 -> STF)
+            const normalizedProduct = productText.replace(/\d+/g, '').trim().replace(/[^\w]/g, '').toUpperCase();
+            
+            if (normalizedProduct !== 'STF') {
+                hasNonSTFProduct = true;
+            }
+        });
+        
+        // Hide card if it only has STF products
+        if (!hasNonSTFProduct) {
+            card.classList.add('hidden-stf');
+        }
+    });
+}
+
+// Show all products (remove STF filter)
+function showAllProducts() {
+    const subscriberCards = document.querySelectorAll('.subscriber-card');
+    subscriberCards.forEach(card => {
+        card.classList.remove('hidden-stf');
+    });
+}
+
 // Initialize the application
 document.addEventListener('DOMContentLoaded', () => {
     loadCircuitData();
@@ -741,6 +803,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initTabs();
     buildCircuitTracker();
     scheduleMidnightReset();
+    initSTFFilter();
     
     // Add event listeners for route tracking
     document.getElementById('start-route-btn').addEventListener('click', startRoute);
