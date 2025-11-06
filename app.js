@@ -184,9 +184,48 @@ function handleCircuitChange(event) {
     const selectedCircuit = event.target.value;
     
     if (selectedCircuit && circuits[selectedCircuit]) {
+        currentCircuit = selectedCircuit;
         displayCoverSheet(selectedCircuit, circuits[selectedCircuit]);
         displaySubscribers(circuits[selectedCircuit]);
+        
+        // Restore circuit status if it was already started
+        const circuitStatus = getCircuitStatus(selectedCircuit);
+        if (circuitStatus.status === 'in-progress') {
+            // Restore start time display
+            const startBtn = document.getElementById('start-route-btn');
+            const timeDisplay = document.getElementById('route-time-display');
+            const endBtn = document.getElementById('end-route-btn');
+            
+            startBtn.disabled = true;
+            startBtn.textContent = 'Reitti aloitettu';
+            timeDisplay.textContent = `Aloitusaika: ${circuitStatus.startTime}`;
+            timeDisplay.classList.remove('hidden');
+            endBtn.classList.remove('hidden');
+        } else if (circuitStatus.status === 'completed') {
+            // Show completed status
+            const startBtn = document.getElementById('start-route-btn');
+            const timeDisplay = document.getElementById('route-time-display');
+            const endBtn = document.getElementById('end-route-btn');
+            const routeSummary = document.getElementById('route-summary');
+            
+            startBtn.disabled = true;
+            startBtn.textContent = 'Reitti aloitettu';
+            timeDisplay.textContent = `Aloitusaika: ${circuitStatus.startTime}`;
+            timeDisplay.classList.remove('hidden');
+            
+            endBtn.disabled = true;
+            endBtn.textContent = 'Reitti valmis';
+            endBtn.classList.remove('hidden');
+            
+            routeSummary.innerHTML = `
+                <div>Lopetusaika: ${circuitStatus.endTime}</div>
+            `;
+            routeSummary.classList.remove('hidden');
+        } else {
+            resetRouteTracking();
+        }
     } else {
+        currentCircuit = null;
         hideCoverSheet();
         hideSubscribers();
     }
@@ -359,6 +398,44 @@ function hideSubscribers() {
 // Route tracking variables
 let routeStartTime = null;
 let routeEndTime = null;
+let currentCircuit = null;
+
+// Circuit tracking - load from localStorage
+function loadCircuitStatus() {
+    const savedStatus = localStorage.getItem('circuitStatus');
+    return savedStatus ? JSON.parse(savedStatus) : {};
+}
+
+// Save circuit status to localStorage
+function saveCircuitStatus(status) {
+    localStorage.setItem('circuitStatus', JSON.stringify(status));
+}
+
+// Get circuit status
+function getCircuitStatus(circuitCode) {
+    const allStatus = loadCircuitStatus();
+    return allStatus[circuitCode] || { status: 'not-started', startTime: null, endTime: null };
+}
+
+// Update circuit status
+function updateCircuitStatus(circuitCode, status, time = null) {
+    const allStatus = loadCircuitStatus();
+    
+    if (!allStatus[circuitCode]) {
+        allStatus[circuitCode] = { status: 'not-started', startTime: null, endTime: null };
+    }
+    
+    allStatus[circuitCode].status = status;
+    
+    if (status === 'in-progress' && time) {
+        allStatus[circuitCode].startTime = time;
+    } else if (status === 'completed' && time) {
+        allStatus[circuitCode].endTime = time;
+    }
+    
+    saveCircuitStatus(allStatus);
+    refreshCircuitTracker();
+}
 
 // Format time for display
 function formatTime(date) {
@@ -380,9 +457,65 @@ function calculateDuration(startTime, endTime) {
     return `${mins}min`;
 }
 
+// Build circuit tracker display
+function buildCircuitTracker() {
+    const trackerList = document.getElementById('tracker-list');
+    trackerList.innerHTML = '';
+    
+    // Get all available circuits sorted
+    const availableCircuits = ['kp2', 'kp3', 'kp4', 'kp7', 'kp9', 'kp10', 'kp11', 'kp12', 'kp13', 
+                                'kp15', 'kp16', 'kp16b', 'kp18', 'kp19', 'kp21b', 'kp22', 'kp24', 
+                                'kp25', 'kp26', 'kp27', 'kp28', 'kp31', 'kp32a', 'kp32b', 'kp33', 
+                                'kp34', 'kp37', 'kp38', 'kp39', 'kp40', 'kp41', 'kp42', 'kp43b', 
+                                'kp44', 'kp46', 'kp47', 'kp48', 'kp49', 'kp51', 'kp53', 'kp54', 
+                                'kp55', 'kp55b', 'kpr1', 'kpr2', 'kpr3', 'kpr5', 'kpr6'];
+    
+    availableCircuits.forEach(circuit => {
+        const circuitCode = circuit.toUpperCase();
+        const circuitStatus = getCircuitStatus(circuitCode);
+        const displayName = circuitNames[circuitCode] || circuitCode;
+        
+        const trackerItem = document.createElement('div');
+        trackerItem.className = 'tracker-item';
+        
+        // Status indicator
+        const statusIndicator = document.createElement('span');
+        statusIndicator.className = `status-indicator status-${circuitStatus.status}`;
+        
+        // Circuit name
+        const name = document.createElement('span');
+        name.className = 'tracker-circuit-name';
+        name.textContent = displayName;
+        
+        // Time info
+        const timeInfo = document.createElement('div');
+        timeInfo.className = 'tracker-time-info';
+        
+        if (circuitStatus.status === 'in-progress' && circuitStatus.startTime) {
+            timeInfo.textContent = `Aloitettu: ${circuitStatus.startTime}`;
+        } else if (circuitStatus.status === 'completed' && circuitStatus.startTime && circuitStatus.endTime) {
+            timeInfo.textContent = `${circuitStatus.startTime} - ${circuitStatus.endTime}`;
+        }
+        
+        trackerItem.appendChild(statusIndicator);
+        trackerItem.appendChild(name);
+        if (timeInfo.textContent) {
+            trackerItem.appendChild(timeInfo);
+        }
+        
+        trackerList.appendChild(trackerItem);
+    });
+}
+
+// Refresh circuit tracker
+function refreshCircuitTracker() {
+    buildCircuitTracker();
+}
+
 // Start route tracking
 function startRoute() {
     routeStartTime = new Date();
+    const timeStr = formatTime(routeStartTime);
     
     const startBtn = document.getElementById('start-route-btn');
     const timeDisplay = document.getElementById('route-time-display');
@@ -391,15 +524,21 @@ function startRoute() {
     startBtn.disabled = true;
     startBtn.textContent = 'Reitti aloitettu';
     
-    timeDisplay.textContent = `Aloitusaika: ${formatTime(routeStartTime)}`;
+    timeDisplay.textContent = `Aloitusaika: ${timeStr}`;
     timeDisplay.classList.remove('hidden');
     
     endBtn.classList.remove('hidden');
+    
+    // Update circuit status
+    if (currentCircuit) {
+        updateCircuitStatus(currentCircuit, 'in-progress', timeStr);
+    }
 }
 
 // End route tracking
 function endRoute() {
     routeEndTime = new Date();
+    const timeStr = formatTime(routeEndTime);
     
     const endBtn = document.getElementById('end-route-btn');
     const routeSummary = document.getElementById('route-summary');
@@ -409,10 +548,15 @@ function endRoute() {
     
     const duration = calculateDuration(routeStartTime, routeEndTime);
     routeSummary.innerHTML = `
-        <div>Lopetusaika: ${formatTime(routeEndTime)}</div>
+        <div>Lopetusaika: ${timeStr}</div>
         <div>Kokonaisaika: ${duration}</div>
     `;
     routeSummary.classList.remove('hidden');
+    
+    // Update circuit status
+    if (currentCircuit) {
+        updateCircuitStatus(currentCircuit, 'completed', timeStr);
+    }
 }
 
 // Reset route tracking UI
@@ -465,6 +609,7 @@ function initDarkMode() {
 document.addEventListener('DOMContentLoaded', () => {
     loadCircuitData();
     initDarkMode();
+    buildCircuitTracker();
     
     // Add event listeners for route tracking
     document.getElementById('start-route-btn').addEventListener('click', startRoute);

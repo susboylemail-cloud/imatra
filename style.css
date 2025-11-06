@@ -78,6 +78,70 @@ main {
     background-color: white;
 }
 
+.circuit-tracker {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    border: 2px solid #6c757d;
+}
+
+.circuit-tracker h3 {
+    color: #2c3e50;
+    margin-bottom: 0.75rem;
+    font-size: 1.1rem;
+}
+
+.tracker-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.tracker-item {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    background-color: white;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.status-indicator {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.status-not-started {
+    background-color: #dc3545; /* red */
+}
+
+.status-in-progress {
+    background-color: #fd7e14; /* orange */
+}
+
+.status-completed {
+    background-color: #28a745; /* green */
+}
+
+.tracker-circuit-name {
+    flex: 1;
+    font-weight: 500;
+    color: #2c3e50;
+    font-size: 0.9rem;
+}
+
+.tracker-time-info {
+    font-size: 0.8rem;
+    color: #6c757d;
+    width: 100%;
+    padding-left: 24px;
+}
+
 .cover-sheet {
     background-color: #e8f4f8;
     padding: 1rem;
@@ -344,6 +408,28 @@ body.dark-mode #circuit-select {
     background-color: #3d3d3d;
     color: #e0e0e0;
     border-color: #555;
+}
+
+body.dark-mode .circuit-tracker {
+    background-color: #2d2d2d;
+    border-color: #555;
+}
+
+body.dark-mode .circuit-tracker h3 {
+    color: #e0e0e0;
+}
+
+body.dark-mode .tracker-item {
+    background-color: #3d3d3d;
+    border-color: #555;
+}
+
+body.dark-mode .tracker-circuit-name {
+    color: #e0e0e0;
+}
+
+body.dark-mode .tracker-time-info {
+    color: #b0b0b0;
 }
 
 body.dark-mode .cover-sheet {
