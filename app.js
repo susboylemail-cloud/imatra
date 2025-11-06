@@ -330,10 +330,10 @@ function displaySubscribers(subscribers) {
             
             address.appendChild(navLink);
             
-            // Add navigation icon
+            // Add navigation icon (arrow)
             const navIcon = document.createElement('span');
             navIcon.className = 'nav-icon';
-            navIcon.textContent = ' 🧭';
+            navIcon.textContent = ' →';
             navIcon.title = `Seuraava: ${nextSubscriber.street} ${nextSubscriber.number}`;
             address.appendChild(navIcon);
         } else {
@@ -605,11 +605,69 @@ function initDarkMode() {
     });
 }
 
+// Tab switching functionality
+function initTabs() {
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const tabName = button.dataset.tab;
+            
+            // Remove active class from all buttons and contents
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+            
+            // Add active class to clicked button and corresponding content
+            button.classList.add('active');
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+        });
+    });
+}
+
+// Check and reset circuit statuses at midnight
+function checkMidnightReset() {
+    const lastResetDate = localStorage.getItem('lastResetDate');
+    const today = new Date().toDateString();
+    
+    if (lastResetDate !== today) {
+        // It's a new day - reset all circuit statuses
+        console.log('New day detected - resetting all circuit statuses');
+        localStorage.removeItem('circuitStatuses');
+        localStorage.setItem('lastResetDate', today);
+        
+        // Rebuild tracker to show all red statuses
+        buildCircuitTracker();
+    }
+}
+
+// Schedule midnight reset check
+function scheduleMidnightReset() {
+    // Check immediately on load
+    checkMidnightReset();
+    
+    // Calculate time until next midnight
+    const now = new Date();
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+    const timeUntilMidnight = tomorrow - now;
+    
+    // Schedule reset at midnight
+    setTimeout(() => {
+        checkMidnightReset();
+        // After first midnight, check every 24 hours
+        setInterval(checkMidnightReset, 24 * 60 * 60 * 1000);
+    }, timeUntilMidnight);
+}
+
 // Initialize the application
 document.addEventListener('DOMContentLoaded', () => {
     loadCircuitData();
     initDarkMode();
+    initTabs();
     buildCircuitTracker();
+    scheduleMidnightReset();
     
     // Add event listeners for route tracking
     document.getElementById('start-route-btn').addEventListener('click', startRoute);
