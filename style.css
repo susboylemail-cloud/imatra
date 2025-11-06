@@ -66,6 +66,73 @@ main {
     font-size: 1.3rem;
 }
 
+.route-controls {
+    margin-bottom: 1rem;
+}
+
+.route-btn {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.start-btn {
+    background-color: #27ae60;
+    color: white;
+}
+
+.start-btn:hover {
+    background-color: #229954;
+}
+
+.start-btn:disabled {
+    background-color: #95a5a6;
+    cursor: not-allowed;
+}
+
+.end-btn {
+    background-color: #e74c3c;
+    color: white;
+    margin-top: 1rem;
+}
+
+.end-btn:hover {
+    background-color: #c0392b;
+}
+
+.end-btn:disabled {
+    background-color: #95a5a6;
+    cursor: not-allowed;
+}
+
+.route-time {
+    background-color: #d5f4e6;
+    padding: 0.75rem;
+    border-radius: 4px;
+    margin-top: 0.5rem;
+    text-align: center;
+    font-weight: bold;
+    color: #27ae60;
+}
+
+.route-summary {
+    background-color: #fadbd8;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-top: 0.5rem;
+    font-weight: bold;
+    color: #e74c3c;
+}
+
+.route-complete-section {
+    margin-top: 2rem;
+}
+
 .product-summary {
     background-color: white;
     padding: 1rem;

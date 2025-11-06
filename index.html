@@ -22,6 +22,10 @@
 
             <div id="cover-sheet" class="cover-sheet hidden">
                 <h2>Kansilehti - <span id="circuit-name"></span></h2>
+                <div class="route-controls">
+                    <button id="start-route-btn" class="route-btn start-btn">Aloita reitti</button>
+                    <div id="route-time-display" class="route-time hidden"></div>
+                </div>
                 <div class="product-summary" id="product-summary">
                 </div>
             </div>
@@ -29,6 +33,10 @@
             <div id="subscriber-list" class="subscriber-list hidden">
                 <h3>Tilaajatiedot</h3>
                 <div id="subscribers-container">
+                </div>
+                <div class="route-complete-section">
+                    <button id="end-route-btn" class="route-btn end-btn hidden">Reitti valmis</button>
+                    <div id="route-summary" class="route-summary hidden"></div>
                 </div>
             </div>
         </main>

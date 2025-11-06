@@ -66,10 +66,19 @@ function parseCircuitData(text) {
             const parts = parseCSVLine(line);
             // CSV format: "Sivu","Katu","Osoite","Nimi","Merkinnät"
             if (parts.length >= 5) {
+                const street = parts[1];  // Katu
+                const fullAddress = parts[2];  // Osoite (full address)
+                
+                // Extract just the number from the address by removing the street name if it's duplicated
+                let addressNumber = fullAddress;
+                if (fullAddress.startsWith(street + ' ')) {
+                    addressNumber = fullAddress.substring(street.length + 1);
+                }
+                
                 subscribers.push({
                     product: parts[4], // Merkinnät (product codes)
-                    street: parts[1],  // Katu
-                    number: parts[2],  // Osoite (full address)
+                    street: street,
+                    number: addressNumber,
                     name: parts[3]     // Nimi
                 });
             }
@@ -125,11 +134,18 @@ function displayCoverSheet(circuitName, subscribers) {
     const circuitNameElement = document.getElementById('circuit-name');
     const productSummary = document.getElementById('product-summary');
     
-    // Count products using reduce for better performance
-    const productCounts = subscribers.reduce((counts, subscriber) => {
-        counts[subscriber.product] = (counts[subscriber.product] || 0) + 1;
-        return counts;
-    }, {});
+    // Count individual products, splitting combinations
+    const productCounts = {};
+    
+    subscribers.forEach(subscriber => {
+        // Split product codes by comma and count each individually
+        const products = subscriber.product.split(',').map(p => p.trim());
+        products.forEach(product => {
+            if (product) {
+                productCounts[product] = (productCounts[product] || 0) + 1;
+            }
+        });
+    });
     
     // Update circuit name
     circuitNameElement.textContent = circuitName;
@@ -137,8 +153,11 @@ function displayCoverSheet(circuitName, subscribers) {
     // Clear previous summary
     productSummary.innerHTML = '';
     
+    // Sort products alphabetically for consistent display
+    const sortedProducts = Object.entries(productCounts).sort((a, b) => a[0].localeCompare(b[0]));
+    
     // Display product counts
-    for (const [product, count] of Object.entries(productCounts)) {
+    for (const [product, count] of sortedProducts) {
         const productItem = document.createElement('div');
         productItem.className = 'product-item';
         
@@ -156,6 +175,9 @@ function displayCoverSheet(circuitName, subscribers) {
     }
     
     coverSheet.classList.remove('hidden');
+    
+    // Reset route tracking UI for new circuit
+    resetRouteTracking();
 }
 
 // Display subscriber list
@@ -190,6 +212,11 @@ function displaySubscribers(subscribers) {
     });
     
     subscriberList.classList.remove('hidden');
+    
+    // Show end route button if route has been started
+    if (routeStartTime && !routeEndTime) {
+        document.getElementById('end-route-btn').classList.remove('hidden');
+    }
 }
 
 // Hide cover sheet
@@ -202,7 +229,90 @@ function hideSubscribers() {
     document.getElementById('subscriber-list').classList.add('hidden');
 }
 
+// Route tracking variables
+let routeStartTime = null;
+let routeEndTime = null;
+
+// Format time for display
+function formatTime(date) {
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${hours}:${minutes}`;
+}
+
+// Calculate duration in minutes
+function calculateDuration(startTime, endTime) {
+    const diff = endTime - startTime;
+    const minutes = Math.floor(diff / 60000);
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    
+    if (hours > 0) {
+        return `${hours}h ${mins}min`;
+    }
+    return `${mins}min`;
+}
+
+// Start route tracking
+function startRoute() {
+    routeStartTime = new Date();
+    
+    const startBtn = document.getElementById('start-route-btn');
+    const timeDisplay = document.getElementById('route-time-display');
+    const endBtn = document.getElementById('end-route-btn');
+    
+    startBtn.disabled = true;
+    startBtn.textContent = 'Reitti aloitettu';
+    
+    timeDisplay.textContent = `Aloitusaika: ${formatTime(routeStartTime)}`;
+    timeDisplay.classList.remove('hidden');
+    
+    endBtn.classList.remove('hidden');
+}
+
+// End route tracking
+function endRoute() {
+    routeEndTime = new Date();
+    
+    const endBtn = document.getElementById('end-route-btn');
+    const routeSummary = document.getElementById('route-summary');
+    
+    endBtn.disabled = true;
+    endBtn.textContent = 'Reitti valmis';
+    
+    const duration = calculateDuration(routeStartTime, routeEndTime);
+    routeSummary.innerHTML = `
+        <div>Lopetusaika: ${formatTime(routeEndTime)}</div>
+        <div>Kokonaisaika: ${duration}</div>
+    `;
+    routeSummary.classList.remove('hidden');
+}
+
+// Reset route tracking UI
+function resetRouteTracking() {
+    routeStartTime = null;
+    routeEndTime = null;
+    
+    const startBtn = document.getElementById('start-route-btn');
+    const timeDisplay = document.getElementById('route-time-display');
+    const endBtn = document.getElementById('end-route-btn');
+    const routeSummary = document.getElementById('route-summary');
+    
+    startBtn.disabled = false;
+    startBtn.textContent = 'Aloita reitti';
+    
+    timeDisplay.classList.add('hidden');
+    endBtn.classList.add('hidden');
+    endBtn.disabled = false;
+    endBtn.textContent = 'Reitti valmis';
+    routeSummary.classList.add('hidden');
+}
+
 // Initialize the application
 document.addEventListener('DOMContentLoaded', () => {
     loadCircuitData();
+    
+    // Add event listeners for route tracking
+    document.getElementById('start-route-btn').addEventListener('click', startRoute);
+    document.getElementById('end-route-btn').addEventListener('click', endRoute);
 });
