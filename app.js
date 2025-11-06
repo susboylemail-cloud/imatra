@@ -338,9 +338,36 @@ function resetRouteTracking() {
     routeSummary.classList.add('hidden');
 }
 
+// Dark mode functionality
+function initDarkMode() {
+    const darkModeToggle = document.getElementById('dark-mode-toggle');
+    const toggleIcon = darkModeToggle.querySelector('.toggle-icon');
+    
+    // Check for saved dark mode preference
+    const savedDarkMode = localStorage.getItem('darkMode');
+    if (savedDarkMode === 'enabled') {
+        document.body.classList.add('dark-mode');
+        toggleIcon.textContent = '☀️';
+    }
+    
+    // Toggle dark mode
+    darkModeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        
+        if (document.body.classList.contains('dark-mode')) {
+            toggleIcon.textContent = '☀️';
+            localStorage.setItem('darkMode', 'enabled');
+        } else {
+            toggleIcon.textContent = '🌙';
+            localStorage.setItem('darkMode', 'disabled');
+        }
+    });
+}
+
 // Initialize the application
 document.addEventListener('DOMContentLoaded', () => {
     loadCircuitData();
+    initDarkMode();
     
     // Add event listeners for route tracking
     document.getElementById('start-route-btn').addEventListener('click', startRoute);
