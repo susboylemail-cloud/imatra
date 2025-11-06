@@ -298,6 +298,22 @@ function displayCoverSheet(circuitName, subscribers) {
     resetRouteTracking();
 }
 
+// Load delivered addresses from localStorage
+function loadDeliveredAddresses() {
+    const saved = localStorage.getItem('deliveredAddresses');
+    return saved ? JSON.parse(saved) : {};
+}
+
+// Save delivered addresses to localStorage
+function saveDeliveredAddresses(deliveredAddresses) {
+    localStorage.setItem('deliveredAddresses', JSON.stringify(deliveredAddresses));
+}
+
+// Get unique key for subscriber
+function getSubscriberKey(circuitCode, index) {
+    return `${circuitCode}-${index}`;
+}
+
 // Display subscriber list
 function displaySubscribers(subscribers) {
     const subscriberList = document.getElementById('subscriber-list');
@@ -306,10 +322,53 @@ function displaySubscribers(subscribers) {
     // Clear previous subscribers
     subscribersContainer.innerHTML = '';
     
+    // Load delivered status
+    const deliveredAddresses = loadDeliveredAddresses();
+    
     // Display each subscriber
     subscribers.forEach((subscriber, index) => {
         const card = document.createElement('div');
         card.className = 'subscriber-card';
+        
+        // Create checkbox container on the left
+        const checkboxContainer = document.createElement('div');
+        checkboxContainer.className = 'delivery-checkbox-container';
+        
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'delivery-checkbox';
+        checkbox.id = `delivery-checkbox-${index}`;
+        
+        // Check if this address was already delivered
+        const subscriberKey = getSubscriberKey(currentCircuit, index);
+        if (deliveredAddresses[subscriberKey]) {
+            checkbox.checked = true;
+            card.classList.add('delivered');
+        }
+        
+        // Add event listener to save state
+        checkbox.addEventListener('change', (e) => {
+            const deliveredAddresses = loadDeliveredAddresses();
+            if (e.target.checked) {
+                deliveredAddresses[subscriberKey] = true;
+                card.classList.add('delivered');
+            } else {
+                delete deliveredAddresses[subscriberKey];
+                card.classList.remove('delivered');
+            }
+            saveDeliveredAddresses(deliveredAddresses);
+        });
+        
+        const checkboxLabel = document.createElement('label');
+        checkboxLabel.htmlFor = `delivery-checkbox-${index}`;
+        checkboxLabel.className = 'delivery-checkbox-label';
+        
+        checkboxContainer.appendChild(checkbox);
+        checkboxContainer.appendChild(checkboxLabel);
+        
+        // Content container (address, name, products)
+        const contentContainer = document.createElement('div');
+        contentContainer.className = 'subscriber-content';
         
         // Address on top (bold) - make it clickable for navigation
         const address = document.createElement('div');
@@ -371,9 +430,13 @@ function displaySubscribers(subscribers) {
         nameProductContainer.appendChild(name);
         nameProductContainer.appendChild(productsContainer);
         
-        // Add elements in new order: address first, then name with products
-        card.appendChild(address);
-        card.appendChild(nameProductContainer);
+        // Add elements to content container: address first, then name with products
+        contentContainer.appendChild(address);
+        contentContainer.appendChild(nameProductContainer);
+        
+        // Add checkbox and content to card
+        card.appendChild(checkboxContainer);
+        card.appendChild(contentContainer);
         subscribersContainer.appendChild(card);
     });
     
@@ -631,13 +694,23 @@ function checkMidnightReset() {
     const today = new Date().toDateString();
     
     if (lastResetDate !== today) {
-        // It's a new day - reset all circuit statuses
-        console.log('New day detected - resetting all circuit statuses');
+        // It's a new day - reset all circuit statuses and delivered addresses
+        console.log('New day detected - resetting all circuit statuses and delivered addresses');
         localStorage.removeItem('circuitStatuses');
+        localStorage.removeItem('deliveredAddresses');
         localStorage.setItem('lastResetDate', today);
         
         // Rebuild tracker to show all red statuses
         buildCircuitTracker();
+        
+        // Refresh current circuit view if one is selected
+        if (currentCircuit) {
+            const select = document.getElementById('circuit-select');
+            const selectedCircuit = select.value;
+            if (selectedCircuit && circuits[selectedCircuit]) {
+                displaySubscribers(circuits[selectedCircuit]);
+            }
+        }
     }
 }
 
