@@ -189,9 +189,77 @@ main {
     font-size: 1rem;
 }
 
+.subscriber-name-product {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+}
+
 .subscriber-name {
     color: #555;
     font-size: 0.95rem;
+    flex: 1;
+}
+
+.subscriber-products {
+    display: flex;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.product-badge {
+    padding: 0.2rem 0.5rem;
+    border-radius: 3px;
+    font-weight: bold;
+    color: #000;
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+
+.product-badge.product-es {
+    background-color: #48d1cc;
+}
+
+.product-badge.product-hs {
+    background-color: #90ee90;
+}
+
+.product-badge.product-uv {
+    background-color: #ffffe0;
+}
+
+.product-badge.product-stf {
+    background-color: #e6e6fa;
+}
+
+.product-badge.product-esls {
+    background-color: #48d1cc;
+}
+
+.product-badge.product-hsts {
+    background-color: #90ee90;
+}
+
+.product-badge.product-hsls {
+    background-color: #90ee90;
+}
+
+.product-badge.product-hsp {
+    background-color: #90ee90;
+}
+
+.product-badge.product-hsps {
+    background-color: #90ee90;
+}
+
+.product-badge.product-mala {
+    background-color: #ffd700;
+}
+
+.product-badge.product-jo {
+    background-color: #ffa07a;
 }
 
 .hidden {

@@ -205,14 +205,39 @@ function displaySubscribers(subscribers) {
         address.className = 'subscriber-address';
         address.textContent = `${subscriber.street} ${subscriber.number}`;
         
-        // Name with product code
-        const nameWithProduct = document.createElement('div');
-        nameWithProduct.className = 'subscriber-name';
-        nameWithProduct.textContent = `${subscriber.name} ${subscriber.product}`;
+        // Container for name and products
+        const nameProductContainer = document.createElement('div');
+        nameProductContainer.className = 'subscriber-name-product';
         
-        // Add elements in new order: address first, then name with product
+        // Name
+        const name = document.createElement('span');
+        name.className = 'subscriber-name';
+        name.textContent = subscriber.name;
+        
+        // Products container (on the right)
+        const productsContainer = document.createElement('div');
+        productsContainer.className = 'subscriber-products';
+        
+        // Split and create badges for each product
+        const products = subscriber.product.split(/[,\s]+/).filter(p => p.trim());
+        products.forEach(product => {
+            const productBadge = document.createElement('span');
+            productBadge.className = 'product-badge';
+            
+            // Normalize product to get color class
+            const normalizedProduct = product.replace(/\d+/g, '').trim().replace(/[^\w]/g, '');
+            productBadge.classList.add(`product-${normalizedProduct.toLowerCase()}`);
+            productBadge.textContent = product;
+            
+            productsContainer.appendChild(productBadge);
+        });
+        
+        nameProductContainer.appendChild(name);
+        nameProductContainer.appendChild(productsContainer);
+        
+        // Add elements in new order: address first, then name with products
         card.appendChild(address);
-        card.appendChild(nameWithProduct);
+        card.appendChild(nameProductContainer);
         subscribersContainer.appendChild(card);
     });
     
