@@ -18,15 +18,27 @@ body {
 }
 
 header {
-    background-color: #2c3e50;
+    background: linear-gradient(135deg, #0066cc 0%, #0088dd 100%);
     color: white;
     padding: 1rem;
     text-align: center;
     position: relative;
 }
 
+.logo {
+    font-size: 1.8rem;
+    font-weight: bold;
+    background: linear-gradient(135deg, #00aacc 0%, #ffffff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 2px;
+    margin-bottom: 0.25rem;
+}
+
 header h1 {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
+    font-weight: normal;
 }
 
 .dark-mode-toggle {
@@ -79,8 +91,8 @@ header h1 {
 }
 
 .tab-button.active {
-    background-color: #2c3e50;
-    border-bottom-color: #3498db;
+    background-color: #0066cc;
+    border-bottom-color: #00aacc;
     color: white;
 }
 
@@ -186,7 +198,7 @@ main {
     padding: 1rem;
     border-radius: 8px;
     margin-bottom: 1.5rem;
-    border: 2px solid #3498db;
+    border: 2px solid #0066cc;
 }
 
 .cover-sheet h2 {
@@ -297,7 +309,7 @@ main {
 }
 
 .product-count {
-    background-color: #3498db;
+    background-color: #0066cc;
     color: white;
     padding: 0.25rem 0.75rem;
     border-radius: 20px;

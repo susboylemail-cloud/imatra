@@ -769,20 +769,20 @@ function filterSTFProducts() {
     const subscriberCards = document.querySelectorAll('.subscriber-card');
     subscriberCards.forEach(card => {
         const productBadges = card.querySelectorAll('.product-badge');
-        let hasNonSTFProduct = false;
+        let hasSTFProduct = false;
         
         productBadges.forEach(badge => {
             const productText = badge.textContent.trim();
             // Normalize product code - remove numbers (e.g., STF2 -> STF)
             const normalizedProduct = productText.replace(/\d+/g, '').trim().replace(/[^\w]/g, '').toUpperCase();
             
-            if (normalizedProduct !== 'STF') {
-                hasNonSTFProduct = true;
+            if (normalizedProduct === 'STF') {
+                hasSTFProduct = true;
             }
         });
         
-        // Hide card if it only has STF products
-        if (!hasNonSTFProduct) {
+        // Hide card if it has ANY STF products
+        if (hasSTFProduct) {
             card.classList.add('hidden-stf');
         }
     });
