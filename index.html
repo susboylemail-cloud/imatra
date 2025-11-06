@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jakokirja - Lehtien jakelu</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Sähköinen jakokirja</h1>
+        </header>
+
+        <main>
+            <div class="circuit-selector">
+                <label for="circuit-select">Valitse piiri:</label>
+                <select id="circuit-select">
+                    <option value="">-- Valitse piiri --</option>
+                </select>
+            </div>
+
+            <div id="cover-sheet" class="cover-sheet hidden">
+                <h2>Kansilehti - <span id="circuit-name"></span></h2>
+                <div class="product-summary" id="product-summary">
+                </div>
+            </div>
+
+            <div id="subscriber-list" class="subscriber-list hidden">
+                <h3>Tilaajatiedot</h3>
+                <div id="subscribers-container">
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

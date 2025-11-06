@@ -1,0 +1,5 @@
+Helsingin Sanomat | Mannerheimintie | 12 | Virtanen Matti
+Helsingin Sanomat | Mannerheimintie | 14 | Korhonen Anna
+Aamulehti | Mannerheimintie | 16 | Mäkinen Juha
+Helsingin Sanomat | Kaisaniemenkatu | 5 | Nieminen Liisa
+Aamulehti | Kaisaniemenkatu | 7 | Järvinen Pekka

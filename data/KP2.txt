@@ -1,0 +1,6 @@
+Helsingin Sanomat | Bulevardi | 20 | Saarinen Kaisa
+Helsingin Sanomat | Bulevardi | 22 | Heikkinen Timo
+Ilta-Sanomat | Bulevardi | 24 | Laine Arja
+Aamulehti | Fredrikinkatu | 10 | Koskinen Hannu
+Helsingin Sanomat | Fredrikinkatu | 12 | Virtanen Sari
+Ilta-Sanomat | Fredrikinkatu | 14 | Lahtinen Mika
