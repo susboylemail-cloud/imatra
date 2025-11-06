@@ -138,11 +138,18 @@ function displayCoverSheet(circuitName, subscribers) {
     const productCounts = {};
     
     subscribers.forEach(subscriber => {
-        // Split product codes by comma and count each individually
-        const products = subscriber.product.split(',').map(p => p.trim());
+        // Split product codes by comma and space to handle all combinations
+        const products = subscriber.product.split(/[,\s]+/).map(p => p.trim());
         products.forEach(product => {
             if (product) {
-                productCounts[product] = (productCounts[product] || 0) + 1;
+                // Normalize product codes - remove numbers (e.g., UV2 -> UV, HS2 -> HS, ES4 -> ES)
+                let normalizedProduct = product.replace(/\d+/g, '').trim();
+                // Remove any remaining special characters
+                normalizedProduct = normalizedProduct.replace(/[^\w]/g, '');
+                
+                if (normalizedProduct) {
+                    productCounts[normalizedProduct] = (productCounts[normalizedProduct] || 0) + 1;
+                }
             }
         });
     });
@@ -193,21 +200,19 @@ function displaySubscribers(subscribers) {
         const card = document.createElement('div');
         card.className = 'subscriber-card';
         
-        const product = document.createElement('div');
-        product.className = 'subscriber-product';
-        product.textContent = subscriber.product;
-        
+        // Address on top (bold)
         const address = document.createElement('div');
         address.className = 'subscriber-address';
         address.textContent = `${subscriber.street} ${subscriber.number}`;
         
-        const name = document.createElement('div');
-        name.className = 'subscriber-name';
-        name.textContent = subscriber.name;
+        // Name with product code
+        const nameWithProduct = document.createElement('div');
+        nameWithProduct.className = 'subscriber-name';
+        nameWithProduct.textContent = `${subscriber.name} ${subscriber.product}`;
         
-        card.appendChild(product);
+        // Add elements in new order: address first, then name with product
         card.appendChild(address);
-        card.appendChild(name);
+        card.appendChild(nameWithProduct);
         subscribersContainer.appendChild(card);
     });
     
