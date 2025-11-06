@@ -1,19 +1,26 @@
-// Circuit data structure
-const circuits = {
-    'KP1': [],
-    'KP2': [],
-    'KP3': []
-};
+// Circuit data structure - dynamically populated
+const circuits = {};
+
+// List of all available circuits
+const availableCircuits = [
+    'KP2', 'kp3', 'kp4', 'kp7', 'kp9', 'kp10', 'kp11', 'kp12', 
+    'kp15', 'kp16', 'kp16b', 'kp18', 'kp19', 'kp21b', 'kp22', 
+    'kp24', 'kp25', 'kp26', 'kp27', 'kp28', 'kp31', 'kp32a', 
+    'kp32b', 'kp33', 'kp34', 'kp37', 'kp38', 'kp39', 'kp40', 
+    'kp41', 'kp42', 'kp43b', 'kp44', 'kp46', 'kp47', 'kp48', 
+    'kp51', 'kp53', 'kp54', 'kp55a', 'kp55b', 'kpr1', 'kpr2', 
+    'kpr3', 'kpr5', 'kpr6'
+];
 
 // Load circuit data from text files
 async function loadCircuitData() {
     try {
         // Load each circuit's data
-        for (const circuitName in circuits) {
+        for (const circuitName of availableCircuits) {
             const response = await fetch(`data/${circuitName}.txt`);
             if (response.ok) {
                 const text = await response.text();
-                circuits[circuitName] = parseCircuitData(text);
+                circuits[circuitName.toUpperCase()] = parseCircuitData(text);
             } else {
                 console.warn(`Failed to load ${circuitName}.txt: ${response.status} ${response.statusText}`);
             }
@@ -21,27 +28,49 @@ async function loadCircuitData() {
         populateCircuitDropdown();
     } catch (error) {
         console.error('Error loading circuit data files:', error.message);
-        // Create sample data if files don't exist
-        createSampleData();
         populateCircuitDropdown();
     }
 }
 
-// Parse circuit data from text format
+// Parse CSV data with proper quote handling
+function parseCSVLine(line) {
+    const result = [];
+    let current = '';
+    let inQuotes = false;
+    
+    for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        
+        if (char === '"') {
+            inQuotes = !inQuotes;
+        } else if (char === ',' && !inQuotes) {
+            result.push(current.trim());
+            current = '';
+        } else {
+            current += char;
+        }
+    }
+    result.push(current.trim());
+    return result;
+}
+
+// Parse circuit data from CSV format
 function parseCircuitData(text) {
-    const EXPECTED_FIELDS = 4; // product, street, number, name
     const lines = text.trim().split('\n');
     const subscribers = [];
     
-    for (const line of lines) {
-        if (line.trim()) {
-            const parts = line.split('|').map(p => p.trim());
-            if (parts.length >= EXPECTED_FIELDS) {
+    // Skip header line
+    for (let i = 1; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (line) {
+            const parts = parseCSVLine(line);
+            // CSV format: "Sivu","Katu","Osoite","Nimi","Merkinnät"
+            if (parts.length >= 5) {
                 subscribers.push({
-                    product: parts[0],
-                    street: parts[1],
-                    number: parts[2],
-                    name: parts[3]
+                    product: parts[4], // Merkinnät (product codes)
+                    street: parts[1],  // Katu
+                    number: parts[2],  // Osoite (full address)
+                    name: parts[3]     // Nimi
                 });
             }
         }
@@ -50,38 +79,24 @@ function parseCircuitData(text) {
     return subscribers;
 }
 
-// Create sample data for demonstration
-function createSampleData() {
-    circuits['KP1'] = [
-        { product: 'Helsingin Sanomat', street: 'Mannerheimintie', number: '12', name: 'Virtanen Matti' },
-        { product: 'Helsingin Sanomat', street: 'Mannerheimintie', number: '14', name: 'Korhonen Anna' },
-        { product: 'Aamulehti', street: 'Mannerheimintie', number: '16', name: 'Mäkinen Juha' },
-        { product: 'Helsingin Sanomat', street: 'Kaisaniemenkatu', number: '5', name: 'Nieminen Liisa' },
-        { product: 'Aamulehti', street: 'Kaisaniemenkatu', number: '7', name: 'Järvinen Pekka' }
-    ];
-    
-    circuits['KP2'] = [
-        { product: 'Helsingin Sanomat', street: 'Bulevardi', number: '20', name: 'Saarinen Kaisa' },
-        { product: 'Helsingin Sanomat', street: 'Bulevardi', number: '22', name: 'Heikkinen Timo' },
-        { product: 'Ilta-Sanomat', street: 'Bulevardi', number: '24', name: 'Laine Arja' },
-        { product: 'Aamulehti', street: 'Fredrikinkatu', number: '10', name: 'Koskinen Hannu' },
-        { product: 'Helsingin Sanomat', street: 'Fredrikinkatu', number: '12', name: 'Virtanen Sari' },
-        { product: 'Ilta-Sanomat', street: 'Fredrikinkatu', number: '14', name: 'Lahtinen Mika' }
-    ];
-    
-    circuits['KP3'] = [
-        { product: 'Helsingin Sanomat', street: 'Hämeentie', number: '30', name: 'Nieminen Jari' },
-        { product: 'Aamulehti', street: 'Hämeentie', number: '32', name: 'Lehtonen Marko' },
-        { product: 'Helsingin Sanomat', street: 'Hämeentie', number: '34', name: 'Rantanen Tuula' },
-        { product: 'Helsingin Sanomat', street: 'Sörnäistenkatu', number: '15', name: 'Saari Jukka' }
-    ];
-}
-
 // Populate the circuit dropdown menu
 function populateCircuitDropdown() {
     const select = document.getElementById('circuit-select');
     
-    for (const circuitName in circuits) {
+    // Sort circuits for better user experience
+    const sortedCircuits = Object.keys(circuits).sort((a, b) => {
+        // Extract numbers from circuit names for proper sorting
+        const numA = parseInt(a.match(/\d+/)?.[0] || '0');
+        const numB = parseInt(b.match(/\d+/)?.[0] || '0');
+        
+        // Sort by number first, then alphabetically
+        if (numA !== numB) {
+            return numA - numB;
+        }
+        return a.localeCompare(b);
+    });
+    
+    for (const circuitName of sortedCircuits) {
         const option = document.createElement('option');
         option.value = circuitName;
         option.textContent = circuitName;

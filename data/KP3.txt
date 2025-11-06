@@ -1,4 +1,0 @@
-Helsingin Sanomat | Hämeentie | 30 | Nieminen Jari
-Aamulehti | Hämeentie | 32 | Lehtonen Marko
-Helsingin Sanomat | Hämeentie | 34 | Rantanen Tuula
-Helsingin Sanomat | Sörnäistenkatu | 15 | Saari Jukka
