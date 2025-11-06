@@ -4,11 +4,11 @@ const circuits = {};
 // List of all available circuits
 const availableCircuits = [
     'KP2', 'kp3', 'kp4', 'kp7', 'kp9', 'kp10', 'kp11', 'kp12', 
-    'kp15', 'kp16', 'kp16b', 'kp18', 'kp19', 'kp21b', 'kp22', 
+    'kp13', 'kp15', 'kp16', 'kp16b', 'kp18', 'kp19', 'kp21b', 'kp22', 
     'kp24', 'kp25', 'kp26', 'kp27', 'kp28', 'kp31', 'kp32a', 
     'kp32b', 'kp33', 'kp34', 'kp37', 'kp38', 'kp39', 'kp40', 
     'kp41', 'kp42', 'kp43b', 'kp44', 'kp46', 'kp47', 'kp48', 
-    'kp51', 'kp53', 'kp54', 'kp55a', 'kp55b', 'kpr1', 'kpr2', 
+    'kp49', 'kp51', 'kp53', 'kp54', 'kp55a', 'kp55b', 'kpr1', 'kpr2', 
     'kpr3', 'kpr5', 'kpr6'
 ];
 
